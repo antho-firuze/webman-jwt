@@ -3,23 +3,24 @@
 /**
  * @desc JwtToken.php 描述信息
  * @author Tinywan(ShaoBo Wan)
- * @date 2022/2/21 9:45
+ * @modified Firuze(Antho Firuze)
+ * @date 2024/04/24
  */
 
 declare(strict_types=1);
 
-namespace Tinywan\Jwt;
+namespace Firuze\Jwt;
 
 use Firebase\JWT\BeforeValidException;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Firebase\JWT\SignatureInvalidException;
-use Tinywan\Jwt\Exception\JwtCacheTokenException;
-use Tinywan\Jwt\Exception\JwtRefreshTokenExpiredException;
-use Tinywan\Jwt\Exception\JwtTokenException;
-use Tinywan\Jwt\Exception\JwtConfigException;
-use Tinywan\Jwt\Exception\JwtTokenExpiredException;
+use Firuze\Jwt\Exception\JwtCacheTokenException;
+use Firuze\Jwt\Exception\JwtRefreshTokenExpiredException;
+use Firuze\Jwt\Exception\JwtTokenException;
+use Firuze\Jwt\Exception\JwtConfigException;
+use Firuze\Jwt\Exception\JwtTokenExpiredException;
 use UnexpectedValueException;
 
 class JwtToken
@@ -41,7 +42,7 @@ class JwtToken
     public const TOKEN_CLIENT_MOBILE = 'MOBILE';
 
     /**
-     * @desc: 获取当前登录ID
+     * @desc: Get the current login ID
      * @return mixed
      * @throws JwtTokenException
      * @author Tinywan(ShaoBo Wan)
@@ -52,7 +53,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 获取当前用户信息
+     * @desc: Get the current user information
      * @return mixed
      * @author Tinywan(ShaoBo Wan)
      */
@@ -66,7 +67,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 获取指定令牌扩展内容字段的值
+     * @desc: Get the value of the specified token extension content field
      *
      * @param string $val
      * @return mixed|string
@@ -78,7 +79,7 @@ class JwtToken
     }
 
     /**
-     * @desc 获取指定令牌扩展内容
+     * @desc Get the specified token extension content
      * @return array
      * @throws JwtTokenException
      */
@@ -88,7 +89,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 刷新令牌
+     * @desc: Refresh token
      *
      * @return array|string[]
      * @throws JwtTokenException
@@ -100,13 +101,13 @@ class JwtToken
         try {
             $extend = self::verifyToken($token, self::REFRESH_TOKEN);
         } catch (SignatureInvalidException $signatureInvalidException) {
-            throw new JwtRefreshTokenExpiredException('刷新令牌无效');
+            throw new JwtRefreshTokenExpiredException('Refresh token invalid');
         } catch (BeforeValidException $beforeValidException) {
-            throw new JwtRefreshTokenExpiredException('刷新令牌尚未生效');
+            throw new JwtRefreshTokenExpiredException('Refresh the token cards have not taken effect yet');
         } catch (ExpiredException $expiredException) {
-            throw new JwtRefreshTokenExpiredException('刷新令牌会话已过期，请再次登录！');
+            throw new JwtRefreshTokenExpiredException('Refresh the token session has expired, please log in again!');
         } catch (UnexpectedValueException $unexpectedValueException) {
-            throw new JwtRefreshTokenExpiredException('刷新令牌获取的扩展字段不存在');
+            throw new JwtRefreshTokenExpiredException('Refresh the expansion field obtained by the token does not exist');
         } catch (JwtCacheTokenException | \Exception $exception) {
             throw new JwtRefreshTokenExpiredException($exception->getMessage());
         }
@@ -128,7 +129,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 生成令牌.
+     * @desc: Token.
      * @param array $extend
      * @return array
      * @throws JwtConfigException
@@ -136,7 +137,7 @@ class JwtToken
     public static function generateToken(array $extend): array
     {
         if (!isset($extend['id'])) {
-            throw new JwtTokenException('缺少全局唯一字段：id');
+            throw new JwtTokenException('Lack of global unique field: ID');
         }
         $config = self::_getConfig();
         $config['access_exp'] = $extend['access_exp'] ?? $config['access_exp'];
@@ -165,7 +166,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 验证令牌
+     * @desc: Verification token
      * @param int $tokenType
      * @param string|null $token
      * @return array
@@ -178,20 +179,20 @@ class JwtToken
         try {
             return self::verifyToken($token, $tokenType);
         } catch (SignatureInvalidException $signatureInvalidException) {
-            throw new JwtTokenException('身份验证令牌无效');
+            throw new JwtTokenException('Identity verification token invalid');
         } catch (BeforeValidException $beforeValidException) {
-            throw new JwtTokenException('身份验证令牌尚未生效');
+            throw new JwtTokenException('Identity verification tokens have not taken effect');
         } catch (ExpiredException $expiredException) {
-            throw new JwtTokenExpiredException('身份验证会话已过期，请重新登录！');
+            throw new JwtTokenExpiredException('Identity verification session has expired, please log in again!');
         } catch (UnexpectedValueException $unexpectedValueException) {
-            throw new JwtTokenException('获取的扩展字段不存在');
+            throw new JwtTokenException('The expansion field obtained does not exist');
         } catch (JwtCacheTokenException | \Exception $exception) {
             throw new JwtTokenException($exception->getMessage());
         }
     }
 
     /**
-     * @desc: 获取扩展字段.
+     * @desc: Get the expansion field.
      * @return array
      * @throws JwtTokenException
      */
@@ -201,7 +202,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 获令牌有效期剩余时长.
+     * @desc: The remaining time of the tokens is valid.
      * @param int $tokenType
      * @return int
      */
@@ -211,7 +212,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 获取Header头部authorization令牌
+     * @desc: Get the header head Authorization token
      *
      * @throws JwtTokenException
      */
@@ -221,36 +222,36 @@ class JwtToken
         if (!$authorization || 'undefined' == $authorization) {
             $config = self::_getConfig();
             if (!isset($config['is_support_get_token']) || false === $config['is_support_get_token']) {
-                throw new JwtTokenException('请求未携带authorization信息');
+                throw new JwtTokenException('Request the information that is not carried by Authorization');
             }
             $authorization = request()->get($config['is_support_get_token_key']);
             if (empty($authorization)) {
-                throw new JwtTokenException('请求未携带authorization信息');
+                throw new JwtTokenException('Request the information that is not carried by Authorization');
             }
-            $authorization = 'Bearer '.$authorization;
+            $authorization = 'Bearer ' . $authorization;
         }
 
         if (self::REFRESH_TOKEN != substr_count($authorization, '.')) {
-            throw new JwtTokenException('非法的authorization信息');
+            throw new JwtTokenException('Illegal authorization information');
         }
 
         if (2 != count(explode(' ', $authorization))) {
-            throw new JwtTokenException('Bearer验证中的凭证格式有误，中间必须有个空格');
+            throw new JwtTokenException('The voucher format in the Bearer verification is wrong, and there must be a space in the middle');
         }
 
         [$type, $token] = explode(' ', $authorization);
         if ('Bearer' !== $type) {
-            throw new JwtTokenException('接口认证方式需为Bearer');
+            throw new JwtTokenException('The interface authentication method needs to be bearer');
         }
         if (!$token || 'undefined' === $token) {
-            throw new JwtTokenException('尝试获取的Authorization信息不存在');
+            throw new JwtTokenException('Authorization information that tries to obtain does not exist');
         }
 
         return $token;
     }
 
     /**
-     * @desc: 校验令牌
+     * @desc: Verification token
      * @param string $token
      * @param int $tokenType
      * @return array
@@ -276,11 +277,11 @@ class JwtToken
     }
 
     /**
-     * @desc: 生成令牌.
+     * @desc: Token.
      *
-     * @param array $payload 载荷信息
-     * @param string $secretKey 签名key
-     * @param string $algorithms 算法
+     * @param array $payload Load information
+     * @param string $secretKey Signature key
+     * @param string $algorithms algorithm
      * @return string
      */
     private static function makeToken(array $payload, string $secretKey, string $algorithms): string
@@ -289,21 +290,21 @@ class JwtToken
     }
 
     /**
-     * @desc: 获取加密载体.
+     * @desc: Get the dense carrier.
      *
-     * @param array $config 配置文件
-     * @param array $extend 扩展加密字段
+     * @param array $config Configuration file
+     * @param array $extend Extended encryption field
      * @return array
      */
     private static function generatePayload(array $config, array $extend): array
     {
         $basePayload = [
-            'iss' => $config['iss'], // 签发者
-            'aud' => $config['iss'], // 接收该JWT的一方
-            'iat' => time(), // 签发时间
-            'nbf' => time() + ($config['nbf'] ?? 0), // 某个时间点后才能访问
-            'exp' => time() + $config['access_exp'], // 过期时间
-            'extend' => $extend // 自定义扩展信息
+            'iss' => $config['iss'], // Issuer
+            'aud' => $config['iss'], // Receive the party of the JWT
+            'iat' => time(), // Issue time
+            'nbf' => time() + ($config['nbf'] ?? 0), // It can only be accessed at a certain point in time
+            'exp' => time() + $config['access_exp'], // Expiration
+            'extend' => $extend // Custom extension information
         ];
         $resPayLoad['accessPayload'] = $basePayload;
         $basePayload['exp'] = time() + $config['refresh_exp'];
@@ -313,9 +314,9 @@ class JwtToken
     }
 
     /**
-     * @desc: 根据签名算法获取【公钥】签名值
-     * @param string $algorithm 算法
-     * @param int $tokenType 类型
+     * @desc: Get the [Public Key] signature value according to the signature algorithm
+     * @param string $algorithm algorithm
+     * @param int $tokenType type
      * @return string
      * @throws JwtConfigException
      */
@@ -338,9 +339,9 @@ class JwtToken
     }
 
     /**
-     * @desc: 根据签名算法获取【私钥】签名值
-     * @param array $config 配置文件
-     * @param int $tokenType 令牌类型
+     * @desc: Get the [Private Key] signature value according to the signature algorithm
+     * @param array $config Configuration file
+     * @param int $tokenType Token
      * @return string
      */
     private static function getPrivateKey(array $config, int $tokenType = self::ACCESS_TOKEN): string
@@ -361,7 +362,7 @@ class JwtToken
     }
 
     /**
-     * @desc: 获取配置文件
+     * @desc: Get the configuration file
      * @return array
      * @throws JwtConfigException
      */
@@ -369,13 +370,13 @@ class JwtToken
     {
         $config = config('plugin.tinywan.jwt.app.jwt');
         if (empty($config)) {
-            throw new JwtConfigException('jwt配置文件不存在');
+            throw new JwtConfigException('JWT configuration file does not exist');
         }
         return $config;
     }
 
     /**
-     * @desc: 注销令牌
+     * @desc: Logged out token
      * @param string $client
      * @return bool
      */

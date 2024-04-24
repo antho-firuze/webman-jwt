@@ -1,13 +1,15 @@
 <?php
+
 /**
- * @desc JwtCacheTokenExveption.php 描述信息
+ * @desc JwtCacheTokenExveption.php Description
  * @author Tinywan(ShaoBo Wan)
- * @date 2022/3/18 18:15
+ * @modified Firuze(Antho Firuze)
+ * @date 2024/04/24
  */
 
 declare(strict_types=1);
 
-namespace Tinywan\Jwt\Exception;
+namespace Firuze\Jwt\Exception;
 
 class JwtCacheTokenException extends \RuntimeException
 {

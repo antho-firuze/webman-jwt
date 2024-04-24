@@ -1,123 +1,134 @@
 # JSON Web Token (JWT) for webman plugin
 
-[![License](http://poser.pugx.org/tinywan/jwt/license)](https://packagist.org/packages/tinywan/jwt) 
-[![Latest Stable Version](http://poser.pugx.org/tinywan/jwt/v)](https://packagist.org/packages/tinywan/jwt) 
+[![License](http://poser.pugx.org/tinywan/jwt/license)](https://packagist.org/packages/tinywan/jwt)
+[![Latest Stable Version](http://poser.pugx.org/tinywan/jwt/v)](https://packagist.org/packages/tinywan/jwt)
 [![Total Downloads](http://poser.pugx.org/tinywan/jwt/downloads)](https://packagist.org/packages/tinywan/jwt)
 [![Monthly Downloads](http://poser.pugx.org/tinywan/jwt/d/monthly)](https://packagist.org/packages/tinywan/jwt)
 [![Daily Downloads](http://poser.pugx.org/tinywan/jwt/d/daily)](https://packagist.org/packages/tinywan/jwt)
 [![PHP Version Require](http://poser.pugx.org/tinywan/jwt/require/php)](https://packagist.org/packages/tinywan/jwt)
 
-Json web token (JWT), 是为了在网络应用环境间传递声明而执行的一种基于JSON的开放标准（(RFC 7519)，该token被设计为紧凑且安全的，特别适用于分布式站点的单点登录（SSO）场景。
+Json web token (JWT), A kind of based on the transmission of a statement between the network application environment JSON Open standard (RFC 7519)，Should token It is designed to be compact and secure, especially suitable for single -point login (SSO) scenarios of distributed sites.
 
-JWT的声明一般被用来在身份提供者和服务提供者间传递被认证的用户身份信息，以便于从资源服务器获取资源，也可以增加一些额外的其它业务逻辑所必须的声明信息，该token也可直接被用于认证，也可被加密。
+JWT The statement is generally used to pass the certified user identity information between identity providers and service providers, in order to obtain resources from resource servers, and can also increase the declaration information necessary for other business logic. token It can also be directly used for certification or encryption.
 
-## 认证&授权流程
+## Certification & Authorization Process
 
 ![image](https://user-images.githubusercontent.com/14959876/159104533-f51f0a57-e085-44ab-84d7-363a4bb1eda9.png)
 
-## 签名流程
+## Signature process
 
-1. 用户使用用户名和口令到认证服务器上请求认证。
-2. 认证服务器验证用户名和口令后，以服务器端生成JWT Token，这个token的生成过程如下：
-  	- 认证服务器还会生成一个 Secret Key（密钥）
- 	- 对JWT Header和JWT Payload分别求Base64。在Payload可能包括了用户的抽象ID和的过期时间。
-  	- 用密钥对JWT签名 `HMAC-SHA256(SecretKey, Base64UrlEncode(JWT-Header)+'.'+Base64UrlEncode(JWT-Payload))`	
-3. 然后把 `base64(header).base64(payload).signature` 作为 JWT token返回客户端。
-4. 客户端使用JWT Token向应用服务器发送相关的请求。这个JWT Token就像一个临时用户权证一样。
+1. The user uses the username and password to the request certification on the certification server.
+2. After the authentication server verifies the user name and password, generate JWT Token，this token The generation process is as follows:
+   - The authentication server will also generate a Secret Key (key)
+   - Seek Base64 for JWT Header and JWT Payload, respectively.Payload may include the user's abstract ID and the expiration time.
+   - Sign the key to JWT `HMAC-SHA256(SecretKey, Base64UrlEncode(JWT-Header)+'.'+Base64UrlEncode(JWT-Payload))`
+3. Then `base64(header).base64(payload).signature` Back to the client as JWT Token.
+4. The client uses JWT Token to send related requests to the application server.This JWT Token is like a temporary user certificate.
 
-## 安装
+## Install
 
 ```shell
-composer require tinywan/jwt
+composer require firuze/jwt
 ```
 
-## 使用
+## use
 
-### 生成令牌
+### Token
 
 ```php
-use Tinywan\Jwt\JwtToken;
+use Firuze\Jwt\JwtToken;
 
 $user = [
     'id'  => 2022,
-    'name'  => 'Tinywan',
-    'email' => 'Tinywan@163.com'
+    'name'  => 'Firuze',
+    'email' => 'Firuze@163.com'
 ];
 $token = JwtToken::generateToken($user);
 var_dump(json_encode($token));
 ```
 
-**输出（json格式）**
+**Output (json format)**
+
 ```json
 {
-    "token_type": "Bearer",
-    "expires_in": 36000,
-    "access_token": "eyJ0eXAiOiJAUR-Gqtnk9LUPO8IDrLK7tjCwQZ7CI...",
-    "refresh_token": "eyJ0eXAiOiJIEGkKprvcccccQvsTJaOyNy8yweZc..."
+  "token_type": "Bearer",
+  "expires_in": 36000,
+  "access_token": "eyJ0eXAiOiJAUR-Gqtnk9LUPO8IDrLK7tjCwQZ7CI...",
+  "refresh_token": "eyJ0eXAiOiJIEGkKprvcccccQvsTJaOyNy8yweZc..."
 }
 ```
 
-**响应参数**
+**Response parameter**
 
-| 参数|类型|描述|示例值|
-|:---|:---|:---|:---|
-|token_type| string |Token 类型 | Bearer |
-|expires_in| int |凭证有效时间，单位：秒 | 36000 |
-|access_token| string |访问凭证 | XXXXXXXXXXXXXXXXXXXX|
-|refresh_token| string | 刷新凭证（访问凭证过期使用 ） | XXXXXXXXXXXXXXXXXXXX|
+| parameter          | type   | describe                          | Exemplary               |
+| :------------ | :----- | :---------------------------- | :------------------- |
+| token_type    | string | Token type                    | Bearer               |
+| expires_in    | int    | Valley valid time, unit: second        | 36000                |
+| access_token  | string | Access voucher                      | XXXXXXXXXXXXXXXXXXXX |
+| refresh_token | string | Refresh the voucher (the access voucher is expired and used ） | XXXXXXXXXXXXXXXXXXXX |
 
-## 支持函数列表
+## List of supporting functions
 
-1、获取当前`id`
+1. Get the current`id`
+
 ```php
-$id = Tinywan\Jwt\JwtToken::getCurrentId();
+$id = Firuze\Jwt\JwtToken::getCurrentId();
 ```
 
-2、获取所有字段
+2. Get all fields
+
 ```php
-$email = Tinywan\Jwt\JwtToken::getExtend();
+$email = Firuze\Jwt\JwtToken::getExtend();
 ```
 
-3、获取自定义字段
+3. Get the custom field
+
 ```php
-$email = Tinywan\Jwt\JwtToken::getExtendVal('email');
+$email = Firuze\Jwt\JwtToken::getExtendVal('email');
 ```
 
-4、刷新令牌（通过刷新令牌获取访问令牌）
+4. Refresh the token (to get the access token by getting a new token)
+
 ```php
-$refreshToken = Tinywan\Jwt\JwtToken::refreshToken();
+$refreshToken = Firuze\Jwt\JwtToken::refreshToken();
 ```
 
-5、获令牌有效期剩余时长
+5. The remaining time of the tokens is valid
+
 ```php
-$exp = Tinywan\Jwt\JwtToken::getTokenExp();
+$exp = Firuze\Jwt\JwtToken::getTokenExp();
 ```
 
-6、单设备登录。默认是关闭，开启请修改配置文件`config/plugin/tinywan/jwt`
+6. Login single device.The default is closed, please modify the configuration file `config/plugin/firuze/jwt`
 ```php
 'is_single_device' => true,
 ```
-> 单设备登录支持定义客户端 `client` 字段，自定义客户端单点登录（默认为`WEB`，即网页端），如：`MOBILE`、`APP`、`WECHAT`、`WEB`、`ADMIN`、`API`、`OTHER`等等
+
+> Single device login supports definition client `client` field, custom client single-point login (defaults to `WEB`, web page), such as:`MOBILE`、`APP`、`WECHAT`、`WEB`、`ADMIN`、`API`、`OTHER` etc.
+
 ```php
 $user = [
     'id'  => 2022,
-    'name'  => 'Tinywan',
+    'name'  => 'Firuze',
     'client' => 'MOBILE',
 ];
-$token = Tinywan\Jwt\JwtToken::generateToken($user);
+$token = Firuze\Jwt\JwtToken::generateToken($user);
 var_dump(json_encode($token));
 ```
 
-7、获取当前用户信息（模型）
-```php
-$user = Tinywan\Jwt\JwtToken::getUser();
-```
-该配置项目`'user_model'`为一个匿名函数，默认返回空数组，可以根据自己项目ORM定制化自己的返回模型
+7. Get the current user information (model)
 
-**ThinkORM** 配置
+```php
+$user = Firuze\Jwt\JwtToken::getUser();
+```
+
+This configuration item `'User_model'` is an anonymous function, returns the air array by default, and can customize its own return model according to its own ORM
+
+**ThinkORM** Configuration
+
 ```php
 'user_model' => function($uid) {
-// 返回一个数组
+// Return a array
 return \think\facade\Db::table('resty_user')
 	->field('id,username,create_time')
 	->where('id',$uid)
@@ -125,11 +136,11 @@ return \think\facade\Db::table('resty_user')
 }
 ```
 
-**LaravelORM** 配置
+**LaravelORM** Configuration
 
 ```php
 'user_model' => function($uid) {
-// 返回一个对象
+// Return a object
 return \support\Db::table('resty_user')
 	->where('id', $uid)
 	->select('id','email','mobile','create_time')
@@ -137,46 +148,51 @@ return \support\Db::table('resty_user')
 }
 ```
 
-8、令牌清理
-```php
-$res = Tinywan\Jwt\JwtToken::clear();
-```
-> 只有配置项 `is_single_device`为`true` 才会生效。可选参数：`MOBILE`、`APP`、`WECHAT`、`WEB`、`ADMIN`、`API`、`OTHER`等等
+8. Token cleaning
 
-9、自定义终端`client`
 ```php
-// 生成WEB令牌
+$res = Firuze\Jwt\JwtToken::clear();
+```
+
+> Only configuration items `is_single_device` for `true` Only will it take effect. Optional parameter: `MOBILE`、`APP`、`WECHAT`、`WEB`、`ADMIN`、`API`、`OTHER` etc.
+
+9. Custom terminal `Client`
+
+```php
+// Generate web token
 $user = [
     'id'  => 2022,
-    'name'  => 'Tinywan',
+    'name'  => 'Firuze',
     'client' => JwtToken::TOKEN_CLIENT_WEB
 ];
 $token = JwtToken::generateToken($user);
 
-// 生成移动端令牌
+// Generate mobile token
 $user = [
     'id'  => 2022,
-    'name'  => 'Tinywan',
+    'name'  => 'Firuze',
     'client' => JwtToken::TOKEN_CLIENT_MOBILE
 ];
 $token = JwtToken::generateToken($user);
 ```
-默认是`WEB`端
 
-10、自定义访问令牌和刷新令牌过期时间
+The default is the `WEB` end
+
+10. Custom access to token and refresh token expires
 
 ```php
 $extend = [
     'id'  => 2024,
-    'access_exp'  => 7200,  // 2 小时
+    'access_exp'  => 7200,  // 2 Hour
 ];
-$token = Tinywan\Jwt\JwtToken::generateToken($extend);
+$token = Firuze\Jwt\JwtToken::generateToken($extend);
 ```
-## 签名算法
 
-JWT 最常见的几种签名算法(JWA)：`HS256(HMAC-SHA256)` 、`RS256(RSA-SHA256)` 还有 `ES256(ECDSA-SHA256)`
+## Signature algorithm
 
-### JWT 算法列表如下
+JWT The most common signature algorithms (JWA)：`HS256(HMAC-SHA256)` 、`RS256(RSA-SHA256)` besides `ES256(ECDSA-SHA256)`
+
+### JWT The algorithm list is as follows
 
 ```php
 +--------------+-------------------------------+--------------------+
@@ -209,21 +225,22 @@ The use of "+" in the Implementation Requirements column indicates
 that the requirement strength is likely to be increased in a future
 version of the specification.
 ```
-> 可以看到被标记为 Recommended 的只有 RS256 和 ES256。
 
-### 对称加密算法
+> You can see that only RS256 and ES256 are marked as RECOMMENDED.
 
-> 插件安装默认使用`HS256 `对称加密算法。
+### Symmetrical encryption algorithm
 
-HS256 使用同一个`「secret_key」`进行签名与验证。一旦 `secret_key `泄漏，就毫无安全性可言了。因此 HS256 只适合集中式认证，签名和验证都必须由可信方进行。
+> The plug -in installation uses the `HS256` symmetrical encryption algorithm.
 
-### 非对称加密算法
+HS256 uses the same one `「secret_key」` Signature and verification. once `secret_key` There is no security at all. Therefore HS256 It is only suitable for centralized certification, and the signature and verification must be performed by the trusted party.
 
-> RS256 系列是使用 RSA 私钥进行签名，使用 RSA 公钥进行验证。
+### Asymmetric plus algorithm
 
-公钥即使泄漏也毫无影响，只要确保私钥安全就行。RS256 可以将验证委托给其他应用，只要将公钥给他们就行。
+> The RS256 series uses the RSA private key for signature and uses the RSA public key for verification.
 
-> 以下为RS系列算法生成命令，仅供参考
+Even if the public key has no effect, it has no effect, as long as the private key is safe.RS256 can entrust verification to other applications, as long as the public key is given.
+
+> The following is a command of the RS series algorithm, for reference only
 
 ### RS512
 
@@ -246,32 +263,32 @@ ssh-keygen -t rsa -b 4096 -E SHA256 -m PEM -P "" -f RS256.key
 openssl rsa -in RS256.key -pubout -outform PEM -out RS256.key.pub
 ```
 
-## 🚀 视频地址
+## 🚀 Video address
 
-> 不懂的同学可以了解一下视频，会有详细的说明哦
+> Students who do n’t understand can understand the video, there will be detailed explanations
 
-- 如何使用 JWT 认证插件：https://www.bilibili.com/video/BV1HS4y1F7Jx
-- 如何使用 JWT 认证插件（算法篇）：https://www.bilibili.com/video/BV14L4y1g7sY
+- How to use JWT authentication plug-in: https://www.bilibili.com/video/BV1HS4y1F7Jx
+- How to use the JWT authentication plug-in (algorithm): https://www.bilibili.com/video/BV14L4y1g7sY
 
-## 安全性
+## safety
 
 https://www.w3cschool.cn/fastapi/fastapi-cmia3lcw.html
 
-### 概念
+### concept
 
-有许多方法可以处理安全性、身份认证和授权等问题。而且这通常是一个复杂而「困难」的话题。在许多框架和系统中，仅处理安全性和身份认证就会花费大量的精力和代码（在许多情况下，可能占编写的所有代码的 50％ 或更多）。
+There are many ways to deal with problems such as security, identity authentication and authorization.And this is usually a complex and "difficult" topic.In many frameworks and systems, it will cost a lot of energy and code to deal with security and identity certification (in many cases, it may account for 50 % or more of all code written codes).
 
-Jwt 可帮助你以标准的方式轻松、快速地处理安全性，而无需研究和学习所有的安全规范。
+JWT can help you handle safety easily and quickly without studying and learning all safety specifications.
 
-### 场景
+### Scenes
 
-假设您在某个域中拥有后端API。并且您在另一个域或同一域的不同路径（或移动应用程序）中有一个前端。并且您希望有一种方法让前端使用用户名和密码与后端进行身份验证。我们可以使用OAuth2通过JWT来构建它。
+Suppose you have a back -end API in a certain domain.And you have a front end in different paths (or mobile applications) in another domain or the same domain.And you hope that there is a way for the front end to use the username and password and the back end for identity verification.We can use OAUTH2 to build it through JWT.
 
-### 认证流程
+### Authentication process
 
-- 用户在前端输入`username`和`password`，然后点击Enter。
-- 前端（在用户的浏览器中运行）发送一个`username`和`password`我们的API在一个特定的URL（以申报`tokenUrl="token"`）。
-- API 检查username和password，并用“令牌”响应（我们还没有实现任何这些）。“令牌”只是一个包含一些内容的字符串，我们稍后可以使用它来验证此用户。通常，令牌设置为在一段时间后过期。因此，用户稍后将不得不再次登录。如果代币被盗，风险就小了。它不像一个永久有效的密钥（在大多数情况下）。
-前端将该令牌临时存储在某处。
-- 用户单击前端以转到前端 Web 应用程序的另一部分。
-- 前端需要从 API 获取更多数据。但它需要对该特定端点进行身份验证。因此，为了使用我们的 API 进行身份验证，它会发送`Authorization`一个值为`Bearer`加上令牌的标头。如果令牌包含`foobar`，则`Authorization`标头的内容将为：`Bearer foobar`。`注意：中间是有个空格`。
+- The user enters the `username` and `password` at the front end, and then click Enter.
+- The front end (runs in the user's browser) Send a `username` and `password` Our API in a specific URL (to declare `tokenUrl="token"`）。
+- API check Username and Password, and responds with "token" (we haven't realized any of these). "Token" is just a string containing some content. We can use it later to verify this user.Generally, the tokens are set to expire after a period of time.Therefore, users will have to log in again later. If the tokens are stolen, the risk is small. It is not like a permanent and effective key (in most cases).
+  The front end is temporarily stored somewhere.
+- Users click the front end to transfer to another part of the front-end web application.
+- The front end needs to get more data from the API. But it needs to verify the specific endpoint. Therefore, in order to use us API For authentication, it will send `Authorization`A value`Bearer` add token head. If token contains `foobar`，but `Authorization` The content of the header will be: `Bearer foobar`。`Note: There is a space in the middle`。

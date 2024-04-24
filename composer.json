@@ -1,5 +1,5 @@
 {
-  "name": "tinywan/jwt",
+  "name": "firuze/jwt",
   "description": "JSON Web Token (JWT) for webman plugin",
   "type": "library",
   "license": "MIT",
@@ -11,12 +11,12 @@
   },
   "autoload": {
     "psr-4": {
-      "Tinywan\\Jwt\\": "src"
+      "Firuze\\Jwt\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "Tinywan\\Tests\\": "tests/"
+      "Firuze\\Tests\\": "tests/"
     }
   },
   "require-dev": {

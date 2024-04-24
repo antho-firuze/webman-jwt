@@ -1,15 +1,15 @@
 <?php
+
 /**
- * @desc JwtTokenTest.php 描述信息
+ * @desc JwtTokenTest.php Description
  * @author Tinywan(ShaoBo Wan)
  * @date 2022/2/24 10:04
  */
 
 
-namespace Tinywan\Tests;
+namespace Firuze\Tests;
 
-
-use Tinywan\Jwt\JwtToken;
+use Firuze\Jwt\JwtToken;
 
 class JwtTokenTest extends TestCase
 {
