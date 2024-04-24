@@ -368,7 +368,7 @@ class JwtToken
      */
     private static function _getConfig(): array
     {
-        $config = config('plugin.tinywan.jwt.app.jwt');
+        $config = config('plugin.firuze.jwt.app.jwt');
         if (empty($config)) {
             throw new JwtConfigException('JWT configuration file does not exist');
         }
